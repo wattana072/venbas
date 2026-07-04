@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ระบบบริหารจัดการปัญหาผู้บริหาร - สำนักศรัทธาภิบาล</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- CSS Section -->
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+
+      :root {
+        --primary-gradient: linear-gradient(135deg, #091a2a 0%, #173753 50%, #1e4b6c 100%);
+      }
+
+      body {
+        background: var(--primary-gradient);
+        background-attachment: fixed;
+        font-family: 'Sarabun', sans-serif;
+        color: #ffffff;
+        min-height: 100vh;
+      }
+
+      .navbar {
+        background-color: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+      }
+
+      .bg-glass {
+        background: rgba(255, 255, 255, 0.05) !important;
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 15px;
+      }
+
+      /* Custom Tabs */
+      .custom-tabs .nav-link {
+        color: rgba(255,255,255,0.7);
+        border-radius: 30px;
+        margin-right: 15px;
+        padding: 10px 25px;
+        background-color: rgba(0,0,0,0.2);
+        border: 1px solid rgba(255,255,255,0.1);
+        transition: all 0.3s ease;
+      }
+      .custom-tabs .nav-link.active {
+        background-color: #a3d5ff;
+        color: #091a2a !important;
+        border-color: #a3d5ff;
+      }
+      .custom-tabs .nav-link:hover:not(.active) {
+        background-color: rgba(255,255,255,0.1);
+        color: white;
+      }
+
+      /* Table Hover effect */
+      .custom-table {
+        --bs-table-bg: transparent;
+        --bs-table-color: white;
+      }
+      .custom-table thead th {
+        border-bottom: 2px solid rgba(255, 255, 255, 0.3) !important;
+        color: #a3d5ff;
+        font-weight: 500;
+      }
+      .custom-table tbody tr {
+        transition: background-color 0.2s;
+        cursor: pointer;
+      }
+      .custom-table tbody tr:hover {
+        background-color: rgba(255, 255, 255, 0.15) !important;
+      }
+      .custom-table td {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+        vertical-align: middle;
+      }
+
+      /* สีสถานะ */
+      .badge-status-รอดำเนินการ { background-color: #dc3545; color: white; padding: 6px 10px; border-radius: 6px;}
+      .badge-status-รับเรื่อง { background-color: #ffc107; color: black; padding: 6px 10px; border-radius: 6px;}
+      .badge-status-กำลังดำเนินการ { background-color: #0dcaf0; color: black; padding: 6px 10px; border-radius: 6px;}
+      .badge-status-เสร็จ { background-color: #198754; color: white; padding: 6px 10px; border-radius: 6px;}
+
+      /* สีความสำคัญ */
+      .badge-P1 { background-color: #dc3545; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85em;}
+      .badge-P2 { background-color: #fd7e14; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85em;}
+      .badge-P3 { background-color: #ffc107; color: black; padding: 4px 8px; border-radius: 4px; font-size: 0.85em;}
+      .badge-P4 { background-color: #20c997; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85em;}
+
+      /* Modals */
+      .custom-modal {
+        background: linear-gradient(to bottom right, #173753, #1e4b6c);
+        border: 1px solid rgba(255,255,255,0.2);
+        box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+      }
+
+      .custom-input {
+        background-color: rgba(0,0,0,0.25) !important;
+        border: 1px solid rgba(255,255,255,0.2) !important;
+        color: white !important;
+      }
+      .custom-input:focus {
+        border-color: #a3d5ff !important;
+        box-shadow: 0 0 0 0.25rem rgba(163, 213, 255, 0.2) !important;
+      }
+      select option {
+        background-color: #173753;
+        color: white;
+      }
+
+      /* Accordion Dashboard */
+      .custom-accordion .accordion-item {
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+      }
+      .custom-accordion .accordion-button {
+        background-color: rgba(0,0,0,0.3);
+        color: white;
+        font-weight: 500;
+      }
+      .custom-accordion .accordion-button:not(.collapsed) {
+        background-color: rgba(163, 213, 255, 0.2);
+        color: #a3d5ff;
+      }
+      .custom-accordion .list-group-item:hover {
+        background-color: rgba(255,255,255,0.1) !important;
+        cursor: pointer;
+      }
+
+      .swal2-popup {
+        font-family: 'Sarabun', sans-serif !important;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar shadow-sm">
+      <div class="container-fluid">
+        <span class="navbar-brand mb-0 h4 text-white">
+          <i class="fas fa-landmark me-2"></i> สำนักศรัทธาภิบาล | บริหารจัดการปัญหาผู้บริหาร
+        </span>
+      </div>
+    </nav>
+
+    <div class="container mt-4 mb-5">
+
+      <!-- เมนู Tabs -->
+      <ul class="nav nav-pills custom-tabs mb-4" id="mainTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active fw-bold shadow-sm" id="list-tab" data-bs-toggle="tab" data-bs-target="#list-pane" type="button" role="tab">
+            <i class="fas fa-list me-2"></i> รายการปัญหา
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link fw-bold shadow-sm" id="dash-tab" data-bs-toggle="tab" data-bs-target="#dash-pane" type="button" role="tab">
+            <i class="fas fa-chart-pie me-2"></i> แดชบอร์ด
+          </button>
+        </li>
+      </ul>
+
+      <!-- เนื้อหาภายใน Tabs -->
+      <div class="tab-content" id="mainTabContent">
+
+        <!-- Tab 1: รายการปัญหา (เหลือ 1 คอลัมน์) -->
+        <div class="tab-pane fade show active" id="list-pane" role="tabpanel">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="text-white fw-bold mb-0">Listปัญหา (คลิ๊กที่รายการเพื่อดู/แก้ไขข้อเสนอแนะ)</h4>
+            <button class="btn btn-light rounded-pill px-4 fw-bold text-primary shadow-sm" onclick="openFormModal()">
+              <i class="fas fa-plus-circle me-1"></i> เพิ่ม
+            </button>
+          </div>
+
+          <div class="card shadow-lg bg-glass">
+            <div class="card-body p-2">
+              <div class="table-responsive" style="max-height: 75vh; overflow-y: auto;">
+                <table class="table text-white mb-0 custom-table">
+                  <thead class="d-none d-md-table-header-group">
+                    <tr>
+                      <th class="ps-3"><i class="fas fa-list me-2"></i> รายละเอียดปัญหา (คลิกเพื่อดูเพิ่มเติม)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Dashboard -->
+        <div class="tab-pane fade" id="dash-pane" role="tabpanel">
+          <h3 class="text-white fw-bold mb-4">ภาพรวมสถานะปัญหา (คลิ๊กที่ตัวเลขเพื่อดูรายการ)</h3>
+          <div class="row mb-4">
+            <div class="col-md-3 col-6 mb-3">
+              <div class="card bg-glass text-center p-3 h-100 border-danger" style="border-width: 2px;">
+                <h6 class="text-white">รอดำเนินการ</h6>
+                <h2 class="text-danger fw-bold mb-0" id="dashPending">0</h2>
+              </div>
+            </div>
+            <div class="col-md-3 col-6 mb-3">
+              <div class="card bg-glass text-center p-3 h-100 border-warning" style="border-width: 2px;">
+                <h6 class="text-white">รับเรื่อง</h6>
+                <h2 class="text-warning fw-bold mb-0" id="dashReceived">0</h2>
+              </div>
+            </div>
+            <div class="col-md-3 col-6 mb-3">
+              <div class="card bg-glass text-center p-3 h-100 border-info" style="border-width: 2px;">
+                <h6 class="text-white">กำลังดำเนินการ</h6>
+                <h2 class="text-info fw-bold mb-0" id="dashProgress">0</h2>
+              </div>
+            </div>
+            <div class="col-md-3 col-6 mb-3">
+              <div class="card bg-glass text-center p-3 h-100 border-success" style="border-width: 2px;">
+                <h6 class="text-white">เสร็จ</h6>
+                <h2 class="text-success fw-bold mb-0" id="dashDone">0</h2>
+              </div>
+            </div>
+          </div>
+
+          <h4 class="text-white fw-bold mb-3 mt-4"><i class="fas fa-layer-group me-2"></i> จำแนกตามสถานะ</h4>
+          <div class="accordion custom-accordion" id="statusAccordion"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Form (ใช้ร่วมกันทั้ง เพิ่ม และ แก้ไข) -->
+    <div class="modal fade" id="formModal" tabindex="-1" data-bs-backdrop="static">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content custom-modal">
+          <div class="modal-header border-bottom-0">
+            <h5 class="modal-title fw-bold" id="modalTitle"><i class="fas fa-file-alt me-2"></i> เพิ่มข้อมูลปัญหา</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="mainForm">
+              <input type="hidden" id="formId">
+
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label class="form-label text-light">ผู้แจ้ง <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control custom-input" id="reporter" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label text-light">หมวดปัญหา</label>
+                  <input type="text" class="form-control custom-input" id="category">
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label text-light">รายละเอียด <span class="text-danger">*</span></label>
+                <textarea class="form-control custom-input" id="detail" rows="3" required></textarea>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label class="form-label text-light">ความสำคัญ <span class="text-danger">*</span></label>
+                  <select class="form-select custom-input" id="priority" required>
+                    <option value="" disabled selected>เลือก...</option>
+                    <option value="P1 สำคัญมาก">P1 สำคัญมาก</option>
+                    <option value="P2 สำคัญ">P2 สำคัญ</option>
+                    <option value="P3 ปานกลาง">P3 ปานกลาง</option>
+                    <option value="P4 น้อย">P4 น้อย</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label text-light">สถานะ <span class="text-danger">*</span></label>
+                  <select class="form-select custom-input" id="status" required>
+                    <option value="" disabled selected>เลือก...</option>
+                    <option value="รอดำเนินการ">รอดำเนินการ</option>
+                    <option value="รับเรื่อง">รับเรื่อง</option>
+                    <option value="กำลังดำเนินการ">กำลังดำเนินการ</option>
+                    <option value="เสร็จ">เสร็จ</option>
+                  </select>
+                </div>
+              </div>
+
+              <hr class="border-secondary mt-4 mb-4">
+
+              <div class="mb-3">
+                <label class="form-label text-light text-warning">แนวทางแก้ไขในที่ประชุม</label>
+                <textarea class="form-control custom-input" id="meetingSolution" rows="2"></textarea>
+              </div>
+              <div class="mb-3">
+                <label class="form-label text-light text-warning">แนวทางแก้ไขเพิ่มเติม</label>
+                <textarea class="form-control custom-input" id="additionalSolution" rows="2"></textarea>
+              </div>
+
+              <div class="row mb-2">
+                <div class="col-md-6">
+                  <label class="form-label text-light text-info">ผู้บริหารระดับสูง</label>
+                  <input type="text" class="form-control custom-input" id="executive">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label text-light text-info">ผู้รับผิดชอบ</label>
+                  <input type="text" class="form-control custom-input" id="responsible">
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer border-top-0 d-flex justify-content-between">
+            <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">ยกเลิก</button>
+            <button type="button" class="btn btn-primary fw-bold px-4 shadow-sm" onclick="submitData()" id="submitBtn">บันทึกข้อมูล</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Detail (ดูรายละเอียด) -->
+    <div class="modal fade" id="detailModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content custom-modal">
+          <div class="modal-header border-bottom-0">
+            <h5 class="modal-title fw-bold"><i class="fas fa-search me-2"></i> รายละเอียดข้อมูล</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body text-light" style="font-size: 1.05rem;">
+            <div class="row">
+              <div class="col-sm-6 mb-2"><strong>ผู้แจ้ง:</strong> <span id="dtReporter" class="ms-2"></span></div>
+              <div class="col-sm-6 mb-2"><strong>หมวดปัญหา:</strong> <span id="dtCategory" class="ms-2"></span></div>
+              <div class="col-sm-6 mb-2"><strong>ความสำคัญ:</strong> <span id="dtPriority" class="ms-2"></span></div>
+              <div class="col-sm-6 mb-2"><strong>สถานะ:</strong> <span id="dtStatus" class="ms-2"></span></div>
+            </div>
+
+            <hr class="border-secondary">
+            <div class="mb-2 text-warning"><strong>รายละเอียด:</strong></div>
+            <div id="dtDetail" class="mb-4 p-3 bg-dark rounded border border-secondary" style="background-color: rgba(0,0,0,0.3)!important; white-space: pre-wrap;"></div>
+
+            <div class="mb-2 text-info"><strong>แนวทางแก้ไขในที่ประชุม:</strong></div>
+            <div id="dtMeeting" class="mb-4 p-3 bg-dark rounded border border-secondary" style="background-color: rgba(0,0,0,0.3)!important; white-space: pre-wrap;"></div>
+
+            <div class="mb-2 text-info"><strong>แนวทางแก้ไขเพิ่มเติม:</strong></div>
+            <div id="dtAdditional" class="mb-4 p-3 bg-dark rounded border border-secondary" style="background-color: rgba(0,0,0,0.3)!important; white-space: pre-wrap;"></div>
+
+            <div class="row">
+              <div class="col-sm-6 mb-2"><strong>ผู้บริหารระดับสูง:</strong> <span id="dtExecutive" class="ms-2"></span></div>
+              <div class="col-sm-6 mb-2"><strong>ผู้รับผิดชอบ:</strong> <span id="dtResponsible" class="ms-2"></span></div>
+            </div>
+          </div>
+          <div class="modal-footer border-top-0 d-flex justify-content-between">
+            <button type="button" class="btn btn-warning fw-bold px-4 shadow-sm" onclick="openFormModal(currentDetailIndex)"><i class="fas fa-edit me-1"></i> แก้ไขข้อมูล</button>
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">ปิดหน้าต่าง</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- JS Section -->
+    <script>
+      // ==========================================
+      // เอา URL ของ Google Apps Script Web App มาใส่ตรงนี้
+      // ==========================================
+      const API_URL = 'https://script.google.com/macros/s/AKfycby84qwrc94Trt5rIij4J9Z5NA_kBFj54zsg7N8E2VuNk8Sn5DOGEpwG8I1L4Ry4sgHx/exec';
+
+      let allData = [];
+      let formModalInstance;
+      let detailModalInstance;
+      let currentDetailIndex = null;
+
+      document.addEventListener('DOMContentLoaded', function() {
+        formModalInstance = new bootstrap.Modal(document.getElementById('formModal'));
+        detailModalInstance = new bootstrap.Modal(document.getElementById('detailModal'));
+        loadData();
+      });
+
+      function loadData() {
+        document.getElementById('tableBody').innerHTML = '<tr><td class="text-center py-5"><div class="spinner-border text-info"></div><div class="mt-2 text-info">กำลังโหลดข้อมูล...</div></td></tr>';
+
+        // ใช้ Fetch API เพื่อดึงข้อมูลจาก GAS Web App แทน google.script.run
+        fetch(API_URL)
+          .then(response => response.json())
+          .then(result => {
+            if (result.success) {
+              allData = result.data;
+              renderTable();
+              renderDashboard();
+            } else {
+              Swal.fire('ข้อผิดพลาด', 'ไม่สามารถโหลดข้อมูลได้: ' + result.message, 'error');
+              document.getElementById('tableBody').innerHTML = `<tr><td class="text-center py-5 text-danger">เกิดข้อผิดพลาด: ${result.message}</td></tr>`;
+            }
+          })
+          .catch(error => {
+            Swal.fire('ข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อ API ได้ กรุณาตรวจสอบ URL: ' + error.message, 'error');
+            document.getElementById('tableBody').innerHTML = `<tr><td class="text-center py-5 text-danger">ไม่สามารถเชื่อมต่อกับ Server ได้</td></tr>`;
+          });
+      }
+
+      function renderTable() {
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = '';
+
+        if (allData.length === 0) {
+          tbody.innerHTML = '<tr><td class="text-center py-5 text-warning">ไม่มีข้อมูลปัญหา</td></tr>';
+          return;
+        }
+
+        allData.forEach((row, index) => {
+          const tr = document.createElement('tr');
+          tr.setAttribute('onclick', `showDetail(${index})`);
+
+          const reporter = row['ผู้แจ้ง'] || '';
+          const detail = row['รายละเอียด'] || '';
+          const priority = row['ความสำคัญ'] || '';
+          const status = row['สถานะ'] || '';
+          const pCode = (priority || '').substring(0, 2);
+
+          tr.innerHTML = `
+            <td class="p-3">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <span class="text-warning fw-bold"><i class="fas fa-user-circle me-1"></i> ${reporter}</span>
+                <div class="text-end">
+                  <span class="badge-${pCode} shadow-sm me-1">${priority}</span>
+                  <span class="badge-status-${status} shadow-sm mt-1 mt-sm-0 d-inline-block">${status}</span>
+                </div>
+              </div>
+              <div style="white-space: pre-wrap; word-break: break-word; font-size: 1rem; line-height: 1.5; color: #f8f9fa;">${detail}</div>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      function renderDashboard() {
+        const countPending = allData.filter(d => d['สถานะ'] === 'รอดำเนินการ').length;
+        const countReceived = allData.filter(d => d['สถานะ'] === 'รับเรื่อง').length;
+        const countProgress = allData.filter(d => d['สถานะ'] === 'กำลังดำเนินการ').length;
+        const countDone = allData.filter(d => d['สถานะ'] === 'เสร็จ').length;
+
+        document.getElementById('dashPending').innerText = countPending;
+        document.getElementById('dashReceived').innerText = countReceived;
+        document.getElementById('dashProgress').innerText = countProgress;
+        document.getElementById('dashDone').innerText = countDone;
+
+        const statuses = ['รอดำเนินการ', 'รับเรื่อง', 'กำลังดำเนินการ', 'เสร็จ'];
+        let accHtml = '';
+
+        statuses.forEach((status, i) => {
+          const items = allData.filter(d => d['สถานะ'] === status);
+
+          accHtml += `
+            <div class="accordion-item mb-2" style="border-radius: 10px; overflow: hidden;">
+              <h2 class="accordion-header" id="heading${i}">
+                <button class="accordion-button collapsed custom-accordion-btn" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${i}">
+                  ${status} <span class="badge bg-light text-dark ms-2 shadow-sm">${items.length}</span>
+                </button>
+              </h2>
+              <div id="collapse${i}" class="accordion-collapse collapse" data-bs-parent="#statusAccordion">
+                <div class="accordion-body p-0">
+                  <div class="list-group list-group-flush">
+          `;
+
+          if(items.length === 0) {
+            accHtml += `<div class="list-group-item bg-transparent text-white border-secondary">ไม่มีข้อมูลในหมวดนี้</div>`;
+          }
+
+          items.forEach(item => {
+            const originalIndex = allData.findIndex(d => d['ID'] === item['ID']);
+            const pCode = (item['ความสำคัญ'] || '').substring(0, 2);
+
+            accHtml += `
+              <button type="button" class="list-group-item list-group-item-action bg-transparent text-white border-secondary d-flex justify-content-between align-items-center" onclick="showDetail(${originalIndex})">
+                <div class="text-truncate" style="max-width: 75%;">
+                  <strong class="text-warning">${item['ผู้แจ้ง']}</strong>: ${item['รายละเอียด']}
+                </div>
+                <span class="badge-${pCode}">${item['ความสำคัญ']}</span>
+              </button>
+            `;
+          });
+          accHtml += `</div></div></div></div>`;
+        });
+
+        document.getElementById('statusAccordion').innerHTML = accHtml;
+      }
+
+      function showDetail(index) {
+        currentDetailIndex = index;
+        const data = allData[index];
+
+        document.getElementById('dtReporter').innerText = data['ผู้แจ้ง'] || '-';
+        document.getElementById('dtCategory').innerText = data['หมวดปัญหา'] || '-';
+
+        const pCode = (data['ความสำคัญ']||'').substring(0, 2);
+        document.getElementById('dtPriority').innerHTML = `<span class="badge-${pCode}">${data['ความสำคัญ']}</span>`;
+
+        const status = data['สถานะ'] || '';
+        document.getElementById('dtStatus').innerHTML = `<span class="badge-status-${status}">${status}</span>`;
+
+        document.getElementById('dtDetail').innerText = data['รายละเอียด'] || '-';
+        document.getElementById('dtMeeting').innerText = data['แนวทางแก้ไขในที่ประชุม'] || '-';
+        document.getElementById('dtAdditional').innerText = data['แนวทางแก้ไขเพิ่มเติม'] || '-';
+
+        document.getElementById('dtExecutive').innerText = data['ผู้บริหารระดับสูง'] || '-';
+        document.getElementById('dtResponsible').innerText = data['ผู้รับผิดชอบ'] || '-';
+
+        detailModalInstance.show();
+      }
+
+      function openFormModal(index = null) {
+        const form = document.getElementById('mainForm');
+        form.reset();
+        document.getElementById('formId').value = '';
+
+        if (index !== null) {
+          document.getElementById('modalTitle').innerHTML = '<i class="fas fa-edit me-2"></i> แก้ไขข้อมูลปัญหา';
+          document.getElementById('submitBtn').innerHTML = 'บันทึกการแก้ไข';
+          document.getElementById('submitBtn').classList.replace('btn-primary', 'btn-warning');
+          document.getElementById('submitBtn').classList.add('text-dark');
+
+          const data = allData[index];
+          document.getElementById('formId').value = data['ID'] || '';
+          document.getElementById('reporter').value = data['ผู้แจ้ง'] || '';
+          document.getElementById('category').value = data['หมวดปัญหา'] || '';
+          document.getElementById('detail').value = data['รายละเอียด'] || '';
+          document.getElementById('priority').value = data['ความสำคัญ'] || '';
+          document.getElementById('status').value = data['สถานะ'] || '';
+          document.getElementById('meetingSolution').value = data['แนวทางแก้ไขในที่ประชุม'] || '';
+          document.getElementById('additionalSolution').value = data['แนวทางแก้ไขเพิ่มเติม'] || '';
+          document.getElementById('executive').value = data['ผู้บริหารระดับสูง'] || '';
+          document.getElementById('responsible').value = data['ผู้รับผิดชอบ'] || '';
+
+          detailModalInstance.hide();
+        } else {
+          document.getElementById('modalTitle').innerHTML = '<i class="fas fa-plus-circle me-2"></i> เพิ่มข้อมูลปัญหา';
+          document.getElementById('submitBtn').innerHTML = 'บันทึกข้อมูลใหม่';
+          document.getElementById('submitBtn').classList.replace('btn-warning', 'btn-primary');
+          document.getElementById('submitBtn').classList.remove('text-dark');
+        }
+
+        formModalInstance.show();
+      }
+
+      function submitData() {
+        const form = document.getElementById('mainForm');
+        if (!form.checkValidity()) { form.reportValidity(); return; }
+
+        if (API_URL === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL') {
+          Swal.fire('แจ้งเตือน', 'กรุณาใส่ URL ของ Google Apps Script ที่ตัวแปร API_URL ในโค้ดก่อนใช้งาน', 'warning');
+          return;
+        }
+
+        const btn = document.getElementById('submitBtn');
+        const originalText = btn.innerHTML;
+
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> กำลังบันทึก...';
+        btn.disabled = true;
+
+        const formData = {
+          id: document.getElementById('formId').value,
+          reporter: document.getElementById('reporter').value.trim(),
+          category: document.getElementById('category').value.trim(),
+          detail: document.getElementById('detail').value.trim(),
+          priority: document.getElementById('priority').value,
+          status: document.getElementById('status').value,
+          meetingSolution: document.getElementById('meetingSolution').value.trim(),
+          additionalSolution: document.getElementById('additionalSolution').value.trim(),
+          executive: document.getElementById('executive').value.trim(),
+          responsible: document.getElementById('responsible').value.trim()
+        };
+
+        // ใช้ Fetch เพื่อ POST ข้อมูล
+        fetch(API_URL, {
+          method: 'POST',
+          // การส่งแบบ string ธรรมดาช่วยเลี่ยงปัญหา CORS preflight ใน GAS ได้ดีกว่า application/json
+          body: JSON.stringify(formData)
+        })
+          .then(response => response.json())
+          .then(result => {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+
+            if (result.success) {
+              formModalInstance.hide();
+              Swal.fire({
+                icon: 'success',
+                title: 'สำเร็จ',
+                text: result.message,
+                timer: 1500,
+                showConfirmButton: false
+              }).then(() => {
+                loadData();
+              });
+            } else {
+              Swal.fire('เกิดข้อผิดพลาด', result.message, 'error');
+            }
+          })
+          .catch(error => {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+            Swal.fire('เกิดข้อผิดพลาดในการเชื่อมต่อ', error.message, 'error');
+          });
+      }
+    </script>
+  </body>
+</html>
